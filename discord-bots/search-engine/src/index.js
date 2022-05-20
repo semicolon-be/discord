@@ -13,6 +13,11 @@ client.on('ready', () => {
 client.on('messageCreate', async (message) => {
 
 
+    if (!message.content.includes('?') || message.content.includes('How') || message.content.includes('how')) {
+        console.log('not a question')
+        return
+    }
+
     let query = message.content.replace(' ', '%20')
 
 
