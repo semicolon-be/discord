@@ -39,6 +39,16 @@ client.on('messageCreate', async (message) => {
     
     await browser.close()
 
-    message.channel.send(reply)
+    try {
+        message.channel.send(reply)
+    }
+    catch {
+        return
+    }
+    
+    console.log('---------------')
+    console.log(message.author.username + ': ' +  message.content + '\n')
+    console.log(responseMessage)
+    console.log('---------------')
 
 })
