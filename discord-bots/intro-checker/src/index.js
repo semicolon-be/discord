@@ -14,8 +14,6 @@ client.on('messageCreate', (message) => {
 })
 
 client.on('messageUpdate', (oldMessage, newMessage) => {
-    console.log("message updated")
-    return
     handleIntroMessage(newMessage)
 })
 
