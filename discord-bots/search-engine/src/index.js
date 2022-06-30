@@ -13,7 +13,7 @@ client.on('ready', () => {
 client.on('messageCreate', async (message) => {
 
 
-    if (!message.content.includes('?') || message.content.includes('How') || message.content.includes('how')) {
+    if (!message.content.includes('?') && message.content.includes('How') && message.content.includes('how')) {
         console.log('not a question')
         return
     }
@@ -25,9 +25,10 @@ client.on('messageCreate', async (message) => {
     const page = await browser.newPage()
     await page.goto(`https://www.codegrepper.com/search.php?q=${query}`)
     try {
-        await page.waitForSelector('.commando_code_block', { timeout: 5000 })
+        await page.waitForSelector('.commando_code_block', { timeout: 1000 })
     }
     catch {
+        await browser.close()
         return
     }
     
