@@ -4,14 +4,13 @@ const puppeteer = require('puppeteer')
 const { Client, Intents, MessageAttachment } = require('discord.js')
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] })
 
-client.login(process.env.DISCORDJS_BOT_TOKEN)
 
 client.on('ready', () => {
     console.log('running')
 })
 
 client.on('messageCreate', async (message) => {
-
+    
     const command = message.content.substring(0, 5)
     if (command != ';snap') { return }
     
@@ -32,7 +31,7 @@ client.on('messageCreate', async (message) => {
         }
         return true
     })
-
+    
     message.delete()
     const codeExpression = /\`{3}\w+(\r\n|\r|\n)((.+|(\r\n|\r|\n)+)+)\`{3}/gm
     let codeBlock = codeMsg.content.match(codeExpression)?.[0]
@@ -45,7 +44,7 @@ client.on('messageCreate', async (message) => {
     .replace(/^(\`{3})/, '')
     .replace(/((\r\n|\r|\n)?\`{3}(\r\n|\r|\n)?)$/, '')
     .replace(/^(.+(\r\n|\r|\n))/, '')
-
+    
     const browser = await puppeteer.launch({ headless: true })
     const page = await browser.newPage()
     await page.goto(`https://carbon.now.sh/?code=%2520`)
@@ -55,7 +54,7 @@ client.on('messageCreate', async (message) => {
     catch {
         return
     }
-
+    
     try {
         await page.focus('[aria-label="Code editor"]')
         await page.keyboard.type(codeBlock)
@@ -69,7 +68,7 @@ client.on('messageCreate', async (message) => {
 
     
     await browser.close()
-
+    
     try {
         const image = new MessageAttachment('src/code.png')
         message.channel.send({ files: [image] })
@@ -77,7 +76,9 @@ client.on('messageCreate', async (message) => {
     catch {
         return
     }
-
+    
     return
-
+    
 })
+
+client.login(process.env.DISCORDJS_BOT_TOKEN)
