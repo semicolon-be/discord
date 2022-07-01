@@ -26,10 +26,6 @@ client.on('messageCreate', async (message) => {
         return
     }
 
-    // console.log(message.channel)
-
-
-    // let query = message.content.replace(' ', '%20')
     const query = encodeURIComponent(message.content)
     const queryWithLang = encodeURIComponent(message.content + message.channel.name)
     

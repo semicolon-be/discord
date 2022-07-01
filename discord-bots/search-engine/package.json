@@ -3,7 +3,7 @@
     "axios": "^0.27.2",
     "discord.js": "^13.7.0",
     "dotenv": "^16.0.1",
-    "https": "^1.0.0",
+    "https": "^1.0.0"
   },
   "name": "search-engine",
   "version": "1.0.0",
