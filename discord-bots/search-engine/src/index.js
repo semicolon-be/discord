@@ -1,9 +1,14 @@
 require('dotenv').config()
-const puppeteer = require('puppeteer')
+const https = require('https')
+const axios = require('axios')
 
 const { Client, Intents } = require('discord.js')
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] })
 
+  
+const agent = new https.Agent({
+    rejectUnauthorized: false
+})
 
 client.on('ready', () => {
     console.log('running')
@@ -17,39 +22,39 @@ client.on('messageCreate', async (message) => {
         return
     }
 
-    let query = message.content.replace(' ', '%20')
-    
-
-    const browser = await puppeteer.launch({ headless: true })
-    const page = await browser.newPage()
-    await page.goto(`https://www.codegrepper.com/search.php?q=${query}`)
-    try {
-        await page.waitForSelector('.commando_code_block', { timeout: 1000 })
-    }
-    catch {
-        await browser.close()
+    if (message.channel.parent.id != '977480052381995038' || message.author.bot) {
         return
     }
+
+    // console.log(message.channel)
+
+
+    // let query = message.content.replace(' ', '%20')
+    const query = encodeURIComponent(message.content)
+    const queryWithLang = encodeURIComponent(message.content + message.channel.name)
+    
+    let data
+    try {
+        const response = await axios.get(`https://www.codegrepper.com/api/search.php?q=${queryWithLang}&search_options=search_titles`, { httpsAgent: agent })
+        data = response.data.answers[0]
+    } catch { return }
+    if (!data) {
+        try {
+            const response = await axios.get(`https://www.codegrepper.com/api/search.php?q=${query}&search_options=search_titles`, { httpsAgent: agent })
+            data = response.data.answers[0]
+        } catch { return }
+    }
     
     
-    const html = await page.evaluate(() => {
-        const parentCodeBlock = document.getElementsByClassName('commando_code_block')[0]
-        const language = parentCodeBlock.classList['1'].substring(parentCodeBlock.classList['1'].indexOf('-') + 1)
-        return [parentCodeBlock.textContent, language]
-    })
-    
-    const language = html[1]
-    const responseMessage = html[0]
+    const language = data?.language || 'whatever'
+    const responseMessage = data.answer
     const reply = `\`\`\`${language}\n${responseMessage}\`\`\``
     
-    await browser.close()
     
     try {
         message.channel.send(reply)
     }
-    catch {
-        return
-    }
+    catch { return }
     
     console.log('---------------')
     console.log(message.author.username + ': ' +  message.content + '\n')
